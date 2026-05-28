@@ -114,7 +114,3 @@ npm start
 - Multi-vendor support
 - Chat support system
 - Mobile application
-
-## License
-
-MIT
