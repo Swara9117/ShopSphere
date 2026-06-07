@@ -129,7 +129,3 @@ The API serves the built React app from `client/dist` when `NODE_ENV=production`
 - Multi-vendor support
 - Chat support system
 - Mobile application
-
-## License
-
-MIT
