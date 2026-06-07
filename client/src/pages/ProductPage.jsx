@@ -4,12 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchProductById, clearProduct } from '../slices/productSlice';
 import { addToCart } from '../slices/cartSlice';
 import { toggleWishlist } from '../slices/wishlistSlice';
+import { getProductImage, getShopkeeperName } from '../utils/productImage';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 
 export default function ProductPage() {
   const { id } = useParams();
   const [qty, setQty] = useState(1);
+  const [activeImage, setActiveImage] = useState(0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { product, loading, error } = useSelector((state) => state.products);
@@ -22,6 +24,7 @@ export default function ProductPage() {
   }, [dispatch, id]);
 
   const isWishlisted = product && wishlist.some((p) => p._id === product._id);
+  const images = product?.images?.length ? product.images : [getProductImage(product)];
 
   const handleAddToCart = () => {
     if (!userInfo) return navigate('/login');
@@ -35,13 +38,36 @@ export default function ProductPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8">
       <div className="grid gap-8 md:grid-cols-2">
-        <img src={product.image} alt={product.name} className="w-full rounded-xl object-cover" />
+        <div>
+          <img
+            src={images[activeImage]}
+            alt={product.name}
+            className="w-full rounded-xl object-cover"
+          />
+          {images.length > 1 && (
+            <div className="mt-3 flex gap-2 overflow-x-auto">
+              {images.map((src, i) => (
+                <button
+                  key={src}
+                  type="button"
+                  onClick={() => setActiveImage(i)}
+                  className={`shrink-0 rounded-lg border-2 ${activeImage === i ? 'border-primary-600' : 'border-transparent'}`}
+                >
+                  <img src={src} alt="" className="h-16 w-16 rounded-lg object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
         <div>
           <p className="text-sm font-medium text-primary-600">{product.category}</p>
           <h1 className="mt-2 text-3xl font-bold">{product.name}</h1>
-          <p className="mt-4 text-gray-600">{product.description}</p>
+          <p className="mt-2 text-sm">
+            Sold by <span className="font-medium">{getShopkeeperName(product)}</span>
+          </p>
+          <p className="mt-4 muted">{product.description}</p>
           <p className="mt-6 text-3xl font-bold">${product.price.toFixed(2)}</p>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm muted">
             Status: {product.countInStock > 0 ? 'In Stock' : 'Out of Stock'}
           </p>
 
@@ -50,7 +76,7 @@ export default function ProductPage() {
               <select
                 value={qty}
                 onChange={(e) => setQty(Number(e.target.value))}
-                className="rounded-lg border px-3 py-2"
+                className="input w-auto"
               >
                 {[...Array(Math.min(product.countInStock, 10)).keys()].map((x) => (
                   <option key={x + 1} value={x + 1}>
@@ -67,7 +93,7 @@ export default function ProductPage() {
               {userInfo && (
                 <button
                   onClick={() => dispatch(toggleWishlist(product._id))}
-                  className={`rounded-lg border px-4 py-2 ${isWishlisted ? 'border-red-300 text-red-500' : ''}`}
+                  className={`rounded-lg border px-4 py-2 dark:border-gray-600 ${isWishlisted ? 'border-red-300 text-red-500 dark:border-red-700' : ''}`}
                 >
                   {isWishlisted ? 'Wishlisted' : 'Wishlist'}
                 </button>

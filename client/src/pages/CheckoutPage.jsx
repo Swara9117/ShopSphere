@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { createOrder } from '../slices/orderSlice';
 import { clearCart } from '../slices/cartSlice';
 import Message from '../components/Message';
+import { getProductImage, getShopkeeperName } from '../utils/productImage';
 
 export default function CheckoutPage() {
   const [address, setAddress] = useState('');
@@ -29,7 +30,7 @@ export default function CheckoutPage() {
     const orderItems = items.map((item) => ({
       name: item.product.name,
       qty: item.qty,
-      image: item.product.image,
+      image: getProductImage(item.product),
       price: item.product.price,
       product: item.product._id,
     }));
@@ -44,12 +45,13 @@ export default function CheckoutPage() {
 
     if (createOrder.fulfilled.match(result)) {
       dispatch(clearCart());
-      navigate(`/order/${result.payload._id}`);
+      const orders = result.payload.orders || [result.payload];
+      navigate(orders.length === 1 ? `/order/${orders[0]._id}` : '/orders');
     }
   };
 
   if (items.length === 0) {
-    return <p className="py-16 text-center text-gray-500">No items to checkout.</p>;
+    return <p className="py-16 text-center muted">No items to checkout.</p>;
   }
 
   return (
@@ -62,39 +64,51 @@ export default function CheckoutPage() {
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           required
-          className="w-full rounded-lg border px-4 py-2"
+          className="input"
         />
         <input
           placeholder="City"
           value={city}
           onChange={(e) => setCity(e.target.value)}
           required
-          className="w-full rounded-lg border px-4 py-2"
+          className="input"
         />
         <input
           placeholder="Postal Code"
           value={postalCode}
           onChange={(e) => setPostalCode(e.target.value)}
           required
-          className="w-full rounded-lg border px-4 py-2"
+          className="input"
         />
         <input
           placeholder="Country"
           value={country}
           onChange={(e) => setCountry(e.target.value)}
           required
-          className="w-full rounded-lg border px-4 py-2"
+          className="input"
         />
         <select
           value={paymentMethod}
           onChange={(e) => setPaymentMethod(e.target.value)}
-          className="w-full rounded-lg border px-4 py-2"
+          className="input"
         >
           <option value="Razorpay">Razorpay</option>
           <option value="COD">Cash on Delivery</option>
         </select>
 
-        <div className="rounded-lg bg-gray-50 p-4">
+        <div className="space-y-2">
+          {items.map((item) => (
+            <div key={item.product._id} className="flex justify-between text-sm">
+              <span>
+                {item.product.name} x{item.qty}{' '}
+                <span className="muted">({getShopkeeperName(item.product)})</span>
+              </span>
+              <span>${(item.product.price * item.qty).toFixed(2)}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-800 dark:border dark:border-gray-700">
           <p>Items: ${itemsPrice.toFixed(2)}</p>
           <p>Tax: ${taxPrice.toFixed(2)}</p>
           <p>Shipping: ${shippingPrice.toFixed(2)}</p>

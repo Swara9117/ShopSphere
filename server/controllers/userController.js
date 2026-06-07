@@ -6,6 +6,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const name = req.body.name?.trim();
   const email = req.body.email?.trim().toLowerCase();
   const password = req.body.password;
+  const role = req.body.role === 'shopkeeper' ? 'shopkeeper' : 'customer';
 
   if (!name || !email || !password) {
     res.status(400);
@@ -19,7 +20,16 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('User already exists');
   }
 
-  const user = await User.create({ name, email, password });
+  let user;
+  try {
+    user = await User.create({ name, email, password, isAdmin: role === 'shopkeeper' });
+  } catch (err) {
+    if (err.code === 11000) {
+      res.status(400);
+      throw new Error('User already exists with this email');
+    }
+    throw err;
+  }
 
   res.status(201).json({
     _id: user._id,

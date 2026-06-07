@@ -33,12 +33,12 @@ export default function ProductsPage() {
           placeholder="Search products..."
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          className="flex-1 rounded-lg border px-4 py-2 min-w-[200px]"
+          className="input min-w-[200px] flex-1"
         />
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="rounded-lg border px-4 py-2"
+          className="input w-auto"
         >
           {CATEGORIES.map((c) => (
             <option key={c} value={c}>
@@ -51,21 +51,21 @@ export default function ProductsPage() {
           placeholder="Min $"
           value={minPrice}
           onChange={(e) => setMinPrice(e.target.value)}
-          className="w-24 rounded-lg border px-3 py-2"
+          className="input w-24"
         />
         <input
           type="number"
           placeholder="Max $"
           value={maxPrice}
           onChange={(e) => setMaxPrice(e.target.value)}
-          className="w-24 rounded-lg border px-3 py-2"
+          className="input w-24"
         />
       </div>
 
       {loading ? (
         <Loader />
       ) : products.length === 0 ? (
-        <p className="text-center text-gray-500">No products found.</p>
+        <p className="text-center muted">No products found.</p>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => (

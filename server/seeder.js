@@ -3,7 +3,6 @@ const dotenv = require('dotenv');
 const User = require('./models/User');
 const Product = require('./models/Product');
 const Order = require('./models/Order');
-const products = require('./data/products');
 
 dotenv.config();
 
@@ -13,10 +12,8 @@ const importData = async () => {
     await Product.deleteMany();
     await User.deleteMany();
 
-    await Product.insertMany(products);
-
     await User.create({
-      name: 'Admin User',
+      name: 'Demo Shopkeeper',
       email: 'admin@shopsphere.com',
       password: 'admin123',
       isAdmin: true,
@@ -28,7 +25,7 @@ const importData = async () => {
       password: '123456',
     });
 
-    console.log('Data imported!');
+    console.log('Data imported! (users only — no sample products)');
     process.exit();
   } catch (error) {
     console.error(error);

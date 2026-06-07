@@ -3,7 +3,10 @@ const User = require('../models/User');
 const Product = require('../models/Product');
 
 const getWishlist = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id).populate('wishlist');
+  const user = await User.findById(req.user._id).populate({
+    path: 'wishlist',
+    populate: { path: 'shopkeeper', select: 'name' },
+  });
   if (!user) {
     res.status(404);
     throw new Error('User not found');
@@ -34,7 +37,10 @@ const toggleWishlist = asyncHandler(async (req, res) => {
   }
 
   await user.save();
-  const populated = await User.findById(req.user._id).populate('wishlist');
+  const populated = await User.findById(req.user._id).populate({
+    path: 'wishlist',
+    populate: { path: 'shopkeeper', select: 'name' },
+  });
   res.json(populated.wishlist);
 });
 

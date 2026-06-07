@@ -22,15 +22,19 @@ export default function OrderPage() {
     return () => dispatch(clearOrder());
   }, [dispatch, id]);
 
-  if (loading) return <Loader />;
-  if (!order) return null;
+  if (loading || !order) return <Loader />;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
-      <Link to="/orders" className="text-primary-600 hover:underline">
+      <Link to="/orders" className="text-primary-600 hover:underline dark:text-primary-400">
         &larr; Back to Orders
       </Link>
       <h1 className="mt-4 text-2xl font-bold">Order #{order._id.slice(-6)}</h1>
+      {order.shopkeeper?.name && (
+        <p className="mt-1 text-sm muted">
+          Shopkeeper: <span className="font-medium">{order.shopkeeper.name}</span>
+        </p>
+      )}
       <span
         className={`mt-2 inline-block rounded-full px-3 py-1 text-sm font-medium ${statusColors[order.status]}`}
       >
@@ -45,6 +49,7 @@ export default function OrderPage() {
               <li key={item.product} className="flex justify-between text-sm">
                 <span>
                   {item.name} x {item.qty}
+                  <span className="block text-xs muted">Sold by {item.shopkeeperName}</span>
                 </span>
                 <span>${(item.price * item.qty).toFixed(2)}</span>
               </li>
@@ -53,12 +58,12 @@ export default function OrderPage() {
         </div>
         <div>
           <h2 className="font-semibold">Shipping</h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm muted">
             {order.shippingAddress.address}, {order.shippingAddress.city},{' '}
             {order.shippingAddress.postalCode}, {order.shippingAddress.country}
           </p>
           <h2 className="mt-6 font-semibold">Payment</h2>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm muted">
             {order.paymentMethod} — {order.isPaid ? 'Paid' : 'Not paid'}
           </p>
           <p className="mt-4 text-xl font-bold">Total: ${order.totalPrice.toFixed(2)}</p>

@@ -3,6 +3,7 @@ import { FaHeart, FaShoppingCart } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCart } from '../slices/cartSlice';
 import { toggleWishlist } from '../slices/wishlistSlice';
+import { getProductImage, getShopkeeperName } from '../utils/productImage';
 
 export default function ProductCard({ product }) {
   const dispatch = useDispatch();
@@ -21,10 +22,10 @@ export default function ProductCard({ product }) {
   };
 
   return (
-    <div className="group overflow-hidden rounded-xl bg-white shadow-sm transition hover:shadow-md">
+    <div className="card group overflow-hidden transition hover:shadow-md">
       <Link to={`/product/${product._id}`}>
         <img
-          src={product.image}
+          src={getProductImage(product)}
           alt={product.name}
           className="h-48 w-full object-cover transition group-hover:scale-105"
         />
@@ -32,11 +33,14 @@ export default function ProductCard({ product }) {
       <div className="p-4">
         <p className="text-xs font-medium uppercase text-primary-600">{product.category}</p>
         <Link to={`/product/${product._id}`}>
-          <h3 className="mt-1 font-semibold text-gray-900 hover:text-primary-600">{product.name}</h3>
+          <h3 className="mt-1 font-semibold hover:text-primary-600 dark:hover:text-primary-400">
+            {product.name}
+          </h3>
         </Link>
+        <p className="mt-1 text-xs muted">Sold by {getShopkeeperName(product)}</p>
         <div className="mt-2 flex items-center justify-between">
-          <span className="text-lg font-bold text-gray-900">${product.price.toFixed(2)}</span>
-          <span className="text-sm text-gray-500">
+          <span className="text-lg font-bold">${product.price.toFixed(2)}</span>
+          <span className="text-sm muted">
             {product.countInStock > 0 ? `${product.countInStock} in stock` : 'Out of stock'}
           </span>
         </div>
@@ -50,7 +54,7 @@ export default function ProductCard({ product }) {
           </button>
           <button
             onClick={handleWishlist}
-            className={`rounded-lg border px-3 py-2 ${isWishlisted ? 'border-red-300 bg-red-50 text-red-500' : 'border-gray-200 text-gray-500 hover:border-red-300'}`}
+            className={`rounded-lg border px-3 py-2 ${isWishlisted ? 'border-red-300 bg-red-50 text-red-500 dark:border-red-700 dark:bg-red-900/30' : 'border-gray-200 text-gray-500 hover:border-red-300 dark:border-gray-600 dark:text-gray-400'}`}
           >
             <FaHeart />
           </button>

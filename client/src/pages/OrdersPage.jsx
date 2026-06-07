@@ -26,20 +26,21 @@ export default function OrdersPage() {
     <div className="mx-auto max-w-4xl px-4 py-8">
       <h1 className="mb-8 text-2xl font-bold">My Orders</h1>
       {orders.length === 0 ? (
-        <p className="text-gray-500">No orders yet.</p>
+        <p className="muted">No orders yet.</p>
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
             <Link
               key={order._id}
               to={`/order/${order._id}`}
-              className="block rounded-lg bg-white p-4 shadow-sm hover:shadow-md"
+              className="card block p-4 hover:shadow-md"
             >
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Order #{order._id.slice(-6)}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm muted">
                     {new Date(order.createdAt).toLocaleDateString()}
+                    {order.shopkeeper?.name && ` · ${order.shopkeeper.name}`}
                   </p>
                 </div>
                 <div className="text-right">

@@ -2,6 +2,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { FaShoppingCart, FaUser, FaHeart, FaStore, FaMoon, FaSun } from 'react-icons/fa';
 import { logout } from '../slices/authSlice';
+import { clearCart } from '../slices/cartSlice';
+import { clearWishlist } from '../slices/wishlistSlice';
 import { toggleTheme } from '../slices/themeSlice';
 
 export default function Header() {
@@ -16,6 +18,8 @@ export default function Header() {
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(clearCart());
+    dispatch(clearWishlist());
     navigate('/');
   };
 
@@ -36,7 +40,7 @@ export default function Header() {
           </Link>
           {userInfo?.isAdmin && (
             <Link to="/admin" className="text-gray-600 hover:text-primary-600 dark:text-gray-300 dark:hover:text-primary-400">
-              Admin
+              Shopkeeper Dashboard
             </Link>
           )}
         </nav>

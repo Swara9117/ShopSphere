@@ -4,8 +4,10 @@ const Product = require('../models/Product');
 const User = require('../models/User');
 
 const getAnalytics = asyncHandler(async (req, res) => {
-  const orders = await Order.find({});
-  const products = await Product.find({});
+  const shopkeeperId = req.user._id;
+
+  const orders = await Order.find({ shopkeeper: shopkeeperId });
+  const products = await Product.find({ shopkeeper: shopkeeperId });
   const users = await User.countDocuments({ isAdmin: false });
 
   const totalSales = orders
@@ -37,7 +39,7 @@ const getAnalytics = asyncHandler(async (req, res) => {
     salesByMonth,
     lowStock,
     ordersByStatus,
-    recentOrders: orders.slice(0, 5),
+    recentOrders: orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5),
   });
 });
 

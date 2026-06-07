@@ -11,10 +11,12 @@ ShopSphere is a modern MERN Stack e-commerce platform where users can browse pro
 - Order placement & tracking
 - Razorpay payment integration
 
-### Admin
-- Product management (CRUD)
-- Inventory management (stock levels)
-- Sales analytics dashboard
+### Shopkeeper (Admin)
+- Register as shopkeeper and manage **your own** products & orders
+- Upload up to 5 product images per listing
+- Sales analytics dashboard (your revenue, orders, low stock)
+- Product management (create, edit, delete)
+- Order management (only orders for your products)
 
 ## Tech Stack
 
@@ -61,6 +63,7 @@ cp server/.env.example server/.env
 
 ```env
 PORT=8000
+# Always include a database name (e.g. /shopsphere)
 MONGO_URI=mongodb://127.0.0.1:27017/shopsphere
 JWT_SECRET=your_secret_key
 RAZORPAY_KEY_ID=your_razorpay_key_id
@@ -74,7 +77,7 @@ CLIENT_URL=http://localhost:3000
 
 ```bash
 cd server
-npm run data:import   # seed sample products + users (first time)
+npm run data:import   # seed demo users only (no sample products)
 npm run dev
 ```
 
@@ -92,8 +95,10 @@ npm start
 
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | admin@shopsphere.com | admin123 |
-| User | john@example.com | 123456 |
+| Shopkeeper (demo) | admin@shopsphere.com | admin123 |
+| Customer (demo) | john@example.com | 123456 |
+
+Anyone can register as a **Customer** or **Shopkeeper** on the sign-up page. At sign-in, select the matching account type — shopkeepers are redirected to `/admin`.
 
 ## API Endpoints
 
@@ -107,6 +112,16 @@ npm start
 | POST | `/api/orders` | Create order |
 | GET | `/api/orders/myorders` | User orders |
 | GET | `/api/admin/analytics` | Admin dashboard |
+
+## Production Build
+
+```bash
+cd client && npm run build
+cd ../server
+NODE_ENV=production npm start
+```
+
+The API serves the built React app from `client/dist` when `NODE_ENV=production`.
 
 ## Future Enhancements
 

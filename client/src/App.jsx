@@ -18,8 +18,6 @@ import ProfilePage from './pages/ProfilePage';
 import AdminDashboard from './pages/AdminDashboard';
 import { fetchCart } from './slices/cartSlice';
 import { fetchWishlist } from './slices/wishlistSlice';
-import { setTheme } from './slices/themeSlice';
-
 export default function App() {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.auth);

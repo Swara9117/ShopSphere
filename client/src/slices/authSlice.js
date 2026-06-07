@@ -11,9 +11,16 @@ const getUserInfoFromStorage = () => {
   }
 };
 
-export const login = createAsyncThunk('auth/login', async (credentials, { rejectWithValue }) => {
+export const login = createAsyncThunk('auth/login', async ({ email, password, role }, { rejectWithValue }) => {
   try {
-    const { data } = await api.post('/users/login', credentials);
+    const { data } = await api.post('/users/login', { email, password });
+    const isShopkeeper = data.isAdmin;
+    if (role === 'shopkeeper' && !isShopkeeper) {
+      return rejectWithValue('This account is registered as a customer. Please select Customer to sign in.');
+    }
+    if (role === 'customer' && isShopkeeper) {
+      return rejectWithValue('This account is registered as a shopkeeper. Please select Shopkeeper to sign in.');
+    }
     localStorage.setItem('userInfo', JSON.stringify(data));
     return data;
   } catch (err) {

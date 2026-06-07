@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCart, updateCartQty, removeFromCart } from '../slices/cartSlice';
 import Loader from '../components/Loader';
+import { getProductImage, getShopkeeperName } from '../utils/productImage';
 
 export default function CartPage() {
   const dispatch = useDispatch();
@@ -22,8 +23,8 @@ export default function CartPage() {
   if (!userInfo) {
     return (
       <div className="py-16 text-center">
-        <p>Please sign in to view your cart.</p>
-        <Link to="/login" className="mt-4 inline-block text-primary-600 hover:underline">
+        <p className="muted">Please sign in to view your cart.</p>
+        <Link to="/login" className="mt-4 inline-block text-primary-600 hover:underline dark:text-primary-400">
           Sign In
         </Link>
       </div>
@@ -36,28 +37,31 @@ export default function CartPage() {
     <div className="mx-auto max-w-4xl px-4 py-8">
       <h1 className="mb-8 text-2xl font-bold">Shopping Cart</h1>
       {items.length === 0 ? (
-        <p className="text-gray-500">Your cart is empty.</p>
+        <p className="muted">Your cart is empty.</p>
       ) : (
         <>
           <div className="space-y-4">
             {items.map((item) => (
               <div
                 key={item.product._id}
-                className="flex items-center gap-4 rounded-lg bg-white p-4 shadow-sm"
+                className="card flex items-center gap-4 p-4"
               >
                 <img
-                  src={item.product.image}
+                  src={getProductImage(item.product)}
                   alt={item.product.name}
                   className="h-20 w-20 rounded object-cover"
                 />
                 <div className="flex-1">
                   <Link
                     to={`/product/${item.product._id}`}
-                    className="font-medium hover:text-primary-600"
+                    className="font-medium hover:text-primary-600 dark:hover:text-primary-400"
                   >
                     {item.product.name}
                   </Link>
-                  <p className="text-primary-600">${item.product.price.toFixed(2)}</p>
+                  <p className="text-xs muted">Sold by {getShopkeeperName(item.product)}</p>
+                  <p className="text-primary-600 dark:text-primary-400">
+                    ${item.product.price.toFixed(2)}
+                  </p>
                 </div>
                 <select
                   value={item.qty}
@@ -66,7 +70,7 @@ export default function CartPage() {
                       updateCartQty({ productId: item.product._id, qty: Number(e.target.value) })
                     )
                   }
-                  className="rounded border px-2 py-1"
+                  className="rounded border border-gray-300 bg-white px-2 py-1 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                 >
                   {[...Array(10).keys()].map((x) => (
                     <option key={x + 1} value={x + 1}>
@@ -76,14 +80,14 @@ export default function CartPage() {
                 </select>
                 <button
                   onClick={() => dispatch(removeFromCart(item.product._id))}
-                  className="text-red-500 hover:text-red-700"
+                  className="text-red-500 hover:text-red-400"
                 >
                   Remove
                 </button>
               </div>
             ))}
           </div>
-          <div className="mt-8 rounded-lg bg-white p-6 shadow-sm">
+          <div className="card mt-8 p-6">
             <div className="flex justify-between text-lg font-bold">
               <span>Subtotal</span>
               <span>${subtotal.toFixed(2)}</span>
